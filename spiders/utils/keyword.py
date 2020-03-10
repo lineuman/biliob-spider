@@ -17,7 +17,7 @@ class KeywordAdder():
     return self.db.video.find_one({'aid': aid}, video_filter)
 
   def get_video(self):
-    return self.db.video.find({}, video_filter, no_cursor_timeout=True).batch_size(100)
+    return self.db.video.find({"aid":{'$gt':52602672}}, video_filter, no_cursor_timeout=True).batch_size(100)
 
   def get_keyword_by_video(self, video):
     try:

@@ -29,12 +29,13 @@ class BiliobSponsorSpider(Spider):
 
   def save(self, item):
     for each in item['data']['list']:
-      db.sponsor.update_one({'order_id': each['order_id']}, each, upsert=True)
+      each['order_price'] = int(each['order_price'])
+      db.sponsor.replace_one({'order_id': each['order_id']}, each, upsert=True)
     return item
 
 
 if __name__ == "__main__":
-  s = BiliobSponsorSpider("biliob-author-follow-spider")
+  s = BiliobSponsorSpider("sponsor")
   sc = SimpyderConfig()
   sc.PARSE_THREAD_NUMER = 1
   sc.DOWNLOAD_INTERVAL = 10

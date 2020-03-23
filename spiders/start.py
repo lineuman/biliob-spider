@@ -14,7 +14,6 @@ def find_procs_by_name(name):
       for each in process.cmdline():
         if name in each:
           ls.append(process.pid)
-          print(each)
           break
         pass
     except Exception as e:
@@ -40,14 +39,13 @@ weekly_spider = [
     'utils/keyword.py'
 ]
 
-daily_spiders = ['rank_add.py', 'utils/keyword_author.py']
+daily_spiders = ['utils/keyword_author.py']
 
 
 def check():
-  print('[{}] '.format(datetime.datetime.now()))
-  for each_spider_group in [spiders, weekly_spider, daily_spiders]:
+  for each_spider_group in [spiders, weekly_spider]:
 
-    for each_spider in spiders:
+    for each_spider in each_spider_group:
       pid = find_procs_by_name(each_spider)
       if len(pid) == 0:
         run_spider(each_spider)
@@ -55,10 +53,10 @@ def check():
 
 
 def run_spider(spider):
+  print('[{}] 重启 {}'.format(datetime.datetime.now(), spider))
   delete_by_name(spider)
-  cmd = 'nohup python3 {} 1>{}.log 2>&1 &'.format(spider, spider)
+  cmd = 'nohup python {} 1>{}.log 2>&1 &'.format(spider, spider)
   os.system(cmd)
-  print(cmd)
   pass
 
 

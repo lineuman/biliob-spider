@@ -146,6 +146,6 @@ class BiliobNewAuthorSpider(BiliobSpider):
     return item
 
 
+s = BiliobNewAuthorSpider("新作者爬虫")
 if __name__ == "__main__":
-  s = BiliobNewAuthorSpider("biliob-new-video-spider")
   s.run()

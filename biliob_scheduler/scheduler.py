@@ -230,7 +230,7 @@ def set_schedule():
 
   schedule.every().wednesday.at('03:20').do(
       run_threaded, compute_video_rank_table)
-  schedule.every().monday.at('03:20').do(run_threaded, calculate_author_rank)
+  # schedule.every().monday.at('03:20').do(run_threaded, calculate_author_rank)
 
   schedule.every().week.do(run_threaded, update_unfocus_video)
   schedule.every().hour.do(run_threaded, sendSiteInfoCrawlRequest)

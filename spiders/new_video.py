@@ -141,6 +141,6 @@ class BiliobNewVideoSpider(BiliobSpider):
     return item
 
 
+s = BiliobNewVideoSpider("新视频爬虫")
 if __name__ == "__main__":
-  s = BiliobNewVideoSpider("biliob-new-video-spider")
   s.run()

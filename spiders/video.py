@@ -142,9 +142,9 @@ class BiliobVideoSpider(Spider):
     return item
 
 
+s = BiliobVideoSpider("旧视频爬虫")
+sc = SimpyderConfig()
+sc.USER_AGENT = FAKE_UA
+s.set_config(sc)
 if __name__ == "__main__":
-  s = BiliobVideoSpider("biliob-video-spider")
-  sc = SimpyderConfig()
-  sc.USER_AGENT = FAKE_UA
-  s.set_config(sc)
   s.run()

@@ -12,6 +12,7 @@ from utils import sub_channel_2_channel
 
 
 class BiliobSpider(Spider):
+
   def __init__(self, name, thread=1, interval=0.15):
     super().__init__()
     self.name = name

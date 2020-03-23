@@ -84,12 +84,12 @@ class BiliobRankAdd(Spider):
     return items
 
 
+s = BiliobRankAdd("从排行榜获得数据")
+sc = SimpyderConfig()
+sc.PARSE_THREAD_NUMER = 1
+sc.DOWNLOAD_INTERVAL = 1
+sc.LOG_LEVEL = "INFO"
+sc.USER_AGENT = FAKE_UA
+s.set_config(sc)
 if __name__ == "__main__":
-  s = BiliobRankAdd("biliob-rank-add")
-  sc = SimpyderConfig()
-  sc.PARSE_THREAD_NUMER = 1
-  sc.DOWNLOAD_INTERVAL = 1
-  sc.LOG_LEVEL = "INFO"
-  sc.USER_AGENT = FAKE_UA
-  s.set_config(sc)
   s.run()

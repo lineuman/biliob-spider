@@ -57,12 +57,12 @@ class BiliobTagSpider(Spider):
     return item
 
 
-if __name__ == "__main__":
-  s = BiliobTagSpider("biliob-tag-spider")
+s = BiliobTagSpider("标签爬虫")
 
-  sc = SimpyderConfig()
-  sc.PARSE_THREAD_NUMER = 8
-  sc.LOG_LEVEL = "INFO"
-  sc.USER_AGENT = FAKE_UA
-  s.set_config(sc)
+sc = SimpyderConfig()
+sc.PARSE_THREAD_NUMER = 8
+sc.LOG_LEVEL = "INFO"
+sc.USER_AGENT = FAKE_UA
+s.set_config(sc)
+if __name__ == "__main__":
   s.run()

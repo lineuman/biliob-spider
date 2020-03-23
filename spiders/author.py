@@ -150,15 +150,15 @@ class BiliobAuthorSpider(Spider):
     return(item)
 
 
+s = BiliobAuthorSpider("旧视频爬虫")
+sc = SimpyderConfig()
+sc.PARSE_THREAD_NUMER = 1
+sc.LOG_LEVEL = "INFO"
+sc.USER_AGENT = FAKE_UA
+sc.DOWNLOAD_INTERVAL = 0.15
+s.set_config(sc)
+
+coll = db['author']
 if __name__ == "__main__":
-  s = BiliobAuthorSpider("biliob-author-spider")
 
-  sc = SimpyderConfig()
-  sc.PARSE_THREAD_NUMER = 1
-  sc.LOG_LEVEL = "INFO"
-  sc.USER_AGENT = FAKE_UA
-  sc.DOWNLOAD_INTERVAL = 0.15
-  s.set_config(sc)
-
-  coll = db['author']
   s.run()

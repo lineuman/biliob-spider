@@ -98,6 +98,6 @@ class KeywordAdder():
 
 if __name__ == "__main__":
   ka = KeywordAdder()
-  ka.add_range(52602672, 69158731)
+  # ka.add_range(52602672, 69158731)
   ka.auto_add()
   pass

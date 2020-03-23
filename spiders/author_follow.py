@@ -19,9 +19,9 @@ class BiliobAuthorFollowSpider(Spider):
     while True:
       try:
         authors = db.author.find({
-            'follow': {
-                '$exists': False
-            }
+            # 'follow': {
+            #     '$exists': False
+            # }
         }, {'mid': 1})
         for each_author in authors:
           for pn in pn_list:
@@ -47,12 +47,12 @@ class BiliobAuthorFollowSpider(Spider):
     return item
 
 
+s = BiliobAuthorFollowSpider("UP主关注爬虫")
+sc = SimpyderConfig()
+sc.PARSE_THREAD_NUMER = 4
+sc.DOWNLOAD_INTERVAL = 1
+sc.LOG_LEVEL = "INFO"
+sc.USER_AGENT = FAKE_UA
+s.set_config(sc)
 if __name__ == "__main__":
-  s = BiliobAuthorFollowSpider("biliob-author-follow-spider")
-  sc = SimpyderConfig()
-  sc.PARSE_THREAD_NUMER = 4
-  sc.DOWNLOAD_INTERVAL = 1
-  sc.LOG_LEVEL = "INFO"
-  sc.USER_AGENT = FAKE_UA
-  s.set_config(sc)
   s.run()

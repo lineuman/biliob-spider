@@ -8,9 +8,10 @@ import datetime
 from simpyder import Spider, FAKE_UA, SimpyderConfig
 from bson import ObjectId
 import logging
+from utils import enc, dec
 
 
-class BiliobAuthorSpider(Spider):
+class BiliobTagSpider(Spider):
   def gen_url(self):
     while True:
       try:
@@ -18,21 +19,26 @@ class BiliobAuthorSpider(Spider):
             'tag': {
                 '$exists': False
             }
-        }, {'aid': 1})
+        }, {'aid': 1, 'bvid': 1})
         for each_video in videos:
-          yield 'https://www.bilibili.com/video/av{}'.format(each_video['aid'])
+          if 'bvid' in each_video:
+            bvid = each_video['bvid']
+          else:
+            bvid = enc(each_video['aid'])
+          yield 'https://www.bilibili.com/video/{}'.format(bvid)
       except Exception as e:
         logging.exception(e)
       sleep(10)
 
   def parse(self, res):
-    aid = str(
+    bvid = str(
         res.url.lstrip(
-            'https://www.bilibili.com/video/av').rsplit('?')[0])
+            'https://www.bilibili.com/video/BV').rsplit('?')[0])
     tagName = res.xpath("//li[@class='tag']/a/text()")
     item = {}
-    item['aid'] = int(aid)
+    item['bvid'] = bvid
     item['tag_list'] = []
+    item['aid'] = dec('BV' + bvid)
     if tagName != []:
       ITEM_NUMBER = len(tagName)
       for i in range(0, ITEM_NUMBER):
@@ -44,6 +50,7 @@ class BiliobAuthorSpider(Spider):
         'aid': item['aid']
     }, {
         '$set': {
+            'bvid': item['bvid'],
             'tag': item['tag_list']
         }
     }, True)
@@ -51,7 +58,7 @@ class BiliobAuthorSpider(Spider):
 
 
 if __name__ == "__main__":
-  s = BiliobAuthorSpider("biliob-author-spider")
+  s = BiliobTagSpider("biliob-tag-spider")
 
   sc = SimpyderConfig()
   sc.PARSE_THREAD_NUMER = 8

@@ -223,9 +223,9 @@ def set_schedule():
   schedule.every().day.at('07:00').do(run_threaded, update_video)
   schedule.every().day.at('12:00').do(run_threaded, FansWatcher().watchBigAuthor)
   # schedule.every().day.at('13:00').do(run_threaded, author_fans_rate_caculate)
-  schedule.every().day.at('14:00').do(run_threaded, auto_add_author)
+  # schedule.every().day.at('14:00').do(run_threaded, auto_add_author)
   # schedule.every().day.at('16:50').do(run_threaded, auto_crawl_bangumi)
-  schedule.every().day.at('22:00').do(run_threaded, auto_add_video)
+  # schedule.every().day.at('22:00').do(run_threaded, auto_add_video)
   # schedule.every().day.at('04:00').do(run_threaded, add_tag_task)
 
   schedule.every().wednesday.at('03:20').do(

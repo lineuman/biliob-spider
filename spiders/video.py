@@ -19,7 +19,6 @@ class BiliobVideoSpider(Spider):
 
   def gen_url(self):
     while True:
-      sleep(0.125)
       url = get_url_from_redis("videoRedis:start_urls")
       yield url
 
@@ -28,7 +27,11 @@ class BiliobVideoSpider(Spider):
     d = r["data"]
     keys = list(d.keys())
     for each_key in keys:
-      aid = d[each_key]['stat']['aid']
+      if 'aid' in each_key:
+        aid = d[each_key]['stat']['aid']
+      else:
+        aid = None
+      bvid = d[each_key]['bvid'].lstrip('BV')
       author = d[each_key]['owner']['name']
       mid = d[each_key]['owner']['mid']
       view = d[each_key]['stat']['view']
@@ -72,6 +75,7 @@ class BiliobVideoSpider(Spider):
       item['mid'] = mid
       item['pic'] = pic
       item['author'] = author
+      item['bvid'] = bvid
       item['data'] = data
       item['title'] = title
       item['subChannel'] = subChannel
@@ -101,10 +105,13 @@ class BiliobVideoSpider(Spider):
       return item
 
   def save(self, item):
-
-    db['video'].update_one({
-        'aid': int(item['aid'])
-    }, {
+    if db['aid'] == None:
+      data_filter = {
+          'bvid': item['bvid']
+      }
+    else:
+      data_filter = {'aid': item['aid']}
+    db['video'].update_one(data_filter, {
         '$set': {
             'cView': item['current_view'],
             'cFavorite': item['current_favorite'],
@@ -118,6 +125,7 @@ class BiliobVideoSpider(Spider):
             'author': item['author'],
             'subChannel': item['subChannel'],
             'channel': item['channel'],
+            'bvid': item['bvid'],
             'mid': item['mid'],
             'pic': item['pic'],
             'title': item['title'],
@@ -131,8 +139,6 @@ class BiliobVideoSpider(Spider):
             }
         }
     }, True)
-    if 'object_id' in item:
-      self.sentCallBack(item['object_id'], db['user_record'])
     return item
 
 

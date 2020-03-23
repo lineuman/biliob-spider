@@ -1,0 +1,1 @@
+ssh -i ~/.ssh/word-deploy -o StrictHostKeyChecking=no  %BILIOB_SERVER_USERNAME%@%BILIOB_SERVER_IP% "bash ./biliob_spider/run.sh"

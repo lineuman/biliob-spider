@@ -4,22 +4,20 @@ from db import redis_connect_string, db
 from utils import get_url_from_redis
 import redis
 import datetime
-from simpyder import Spider
-from simpyder import FAKE_UA
-from simpyder import SimpyderConfig
+from biliob import BiliobSpider
 from bson import ObjectId
+from utils import sub_channel_2_channel
 
 
-class BiliobAuthorSpider(Spider):
-  def sentCallBack(self, object_id, coll):
-    if object_id != None and object_id != 'null':
-      coll.update_one({'_id': ObjectId(object_id)}, {
-          '$set': {'isExecuted': True}})
-
+class BiliobNewAuthorSpider(BiliobSpider):
   def gen_url(self):
+    url = 'https://api.bilibili.com/x/web-interface/card?mid={}'
     while True:
-      url = get_url_from_redis("authorRedis:start_urls")
-      yield url
+      author_interval = self.get_new_author_from_interval()
+      if author_interval != None:
+        yield url.format(author_interval['mid'])
+      else:
+        sleep(10)
 
   def parse(self, res):
     j = res.json()
@@ -84,7 +82,7 @@ class BiliobAuthorSpider(Spider):
     item['data']['like'] = like
     item['c_like'] = like
     now = datetime.datetime.now()
-    c = coll.aggregate([
+    c = self.db.author.aggregate([
         {
             "$match": {
                 "mid": item['mid']
@@ -120,7 +118,7 @@ class BiliobAuthorSpider(Spider):
     return item
 
   def save(self, item):
-    coll.update_one({
+    self.db.author.update_one({
         'mid': item['mid']
     }, {
         '$set': {
@@ -145,20 +143,9 @@ class BiliobAuthorSpider(Spider):
             }
         }
     }, True)
-    if 'object_id' in item:
-      self.sentCallBack(item['object_id'], db['user_record'])
-    return(item)
+    return item
 
 
-s = BiliobAuthorSpider("旧视频爬虫")
-sc = SimpyderConfig()
-sc.PARSE_THREAD_NUMER = 1
-sc.LOG_LEVEL = "INFO"
-sc.USER_AGENT = FAKE_UA
-sc.DOWNLOAD_INTERVAL = 0.15
-s.set_config(sc)
-
-coll = db['author']
+s = BiliobNewAuthorSpider("新作者爬虫")
 if __name__ == "__main__":
-
   s.run()

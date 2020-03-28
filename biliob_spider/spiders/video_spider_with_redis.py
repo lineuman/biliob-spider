@@ -4,6 +4,7 @@ import scrapy
 from scrapy.http import Request
 from biliob_spider.items import VideoItem
 from datetime import datetime
+from datetime import timedelta
 import time
 import json
 import logging
@@ -47,7 +48,7 @@ class VideoSpiderWithRedis(RedisSpider):
         coin = d[each_key]['stat']['coin']
         share = d[each_key]['stat']['share']
         like = d[each_key]['stat']['like']
-        current_date = datetime.now()
+        current_date = datetime.utcnow() + timedelta(hours=8)
         data = {
             'view': view,
             'favorite': favorite,

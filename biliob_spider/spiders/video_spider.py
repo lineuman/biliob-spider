@@ -63,7 +63,7 @@ class VideoSpider(scrapy.spiders.Spider):
                 coin = d[each_key]['stat']['coin']
                 share = d[each_key]['stat']['share']
                 like = d[each_key]['stat']['like']
-                current_date = datetime.now()
+                current_date = datetime.utcnow() + timedelta(hours=8)
                 data = {
                     'view': view,
                     'favorite': favorite,

@@ -30,6 +30,7 @@ class BiliobSpider(Spider):
         # 如果存在锁
         if self.db.lock.count_documents({"name": "author_interval"}):
           sleep(0.1)
+          continue
         # 挂锁
         self.db.lock.insert(
             {"name": "author_interval", "date": datetime.datetime.utcnow()})
@@ -42,10 +43,11 @@ class BiliobSpider(Spider):
               {'next': {'$lt': datetime.datetime.utcnow()}}).limit(100))
         else:
           # 如果存在手动操作，则刷新数据
-          for order_id in data['order']:
-            self.db.user_record.update_one({'_id': order_id}, {'$set': {
-                'isExecuted': True
-            }})
+          for each_data in data:
+            for order_id in each_data['order']:
+              self.db.user_record.update_one({'_id': order_id}, {'$set': {
+                  'isExecuted': True
+              }})
         if data != None:
           for each_data in data:
             each_data['next'] = each_data['next'] + \

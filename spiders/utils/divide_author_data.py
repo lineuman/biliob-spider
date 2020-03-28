@@ -1,6 +1,8 @@
 from db import db
 from datetime import datetime
-for each_author in db.author.find({}).batch_size(20):
+for each_author in db.author.find({'mid': {'$gt': 1841196}}).sort({'_id': 1}).batch_size(20):
+  if 'data' not in each_author:
+    continue
   data = each_author['data']
   for each_data in data:
     each_data['mid'] = each_author['mid']

@@ -68,7 +68,7 @@ class BiliobSpider(Spider):
           {'order.0': {'$exists': True}})
       if data == None:
         data = self.db.video_interval.find_one(
-            {'next': {'$lt': datetime.datetime.utcnow() + datetime.timedelta(hours=8)}})
+            {'next': {'$lt': datetime.datetime.utcnow()}})
       else:
         # 如果存在手动操作，则刷新数据
         for order_id in data['order']:

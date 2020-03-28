@@ -43,14 +43,14 @@ class BiliobTagSpider(Spider):
       ITEM_NUMBER = len(tagName)
       for i in range(0, ITEM_NUMBER):
         item['tag_list'].append(tagName[i])
-      return item
+    return item
 
   def save(self, item):
     db.video.update_one({
-        'aid': item['aid']
+        'bvid': item['bvid']
     }, {
         '$set': {
-            'bvid': item['bvid'],
+            'aid': item['aid'],
             'tag': item['tag_list']
         }
     }, True)
@@ -61,7 +61,7 @@ s = BiliobTagSpider("标签爬虫")
 
 sc = SimpyderConfig()
 sc.PARSE_THREAD_NUMER = 8
-sc.LOG_LEVEL = "INFO"
+sc.LOG_LEVEL = "DEBUG"
 sc.USER_AGENT = FAKE_UA
 s.set_config(sc)
 if __name__ == "__main__":

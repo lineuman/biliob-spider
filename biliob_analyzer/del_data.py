@@ -1,20 +1,23 @@
 from db import db
 import datetime
 author_coll = db['author']
-authors = author_coll.find({'data.2000': {'$exists': True}})
+authors = author_coll.find({'data.5000': {'$exists': True}})
 for each_author in authors:
   print(each_author['name'])
   mid = each_author['mid']
   data = sorted(each_author['data'],
                 key=lambda x: x['datetime'], reverse=True)
   c_data = data[0]
-  c_date = data[0]['datetime'].strftime('%Y-%m-%d %H')
+  c_date = data[0]['datetime'].strftime('%Y-%m-%d %H:%M')
   f_data = [c_data]
   for each_data in data:
     delta_day = (datetime.datetime.now() -
                  each_data['datetime']).days
-    if delta_day > 7:
-      n_date = each_data['datetime'].strftime('%Y-%m-%d %H')
+    if delta_day >= 0:
+      if delta_day < 7:
+        n_date = each_data['datetime'].strftime('%Y-%m-%d %H:%M')
+      else:
+        n_date = each_data['datetime'].strftime('%Y-%m-%d %H')
       # 如果不是同一小时
       if n_date != c_date:
         f_data.append(each_data)

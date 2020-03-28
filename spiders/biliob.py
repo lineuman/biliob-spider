@@ -24,46 +24,63 @@ class BiliobSpider(Spider):
     sc.DOWNLOAD_INTERVAL = interval
     self.set_config(sc)
 
-  def get_new_author_from_interval(self):
-    try:
-      # 先检查有没有手动操作
-      data = self.db.author_interval.find_one({'order.0': {'$exists': 1}})
-      if data == None:
-        data = self.db.author_interval.find_one(
-            {'next': {'$lt': datetime.datetime.now()}})
-      else:
-        # 如果存在手动操作，则刷新数据
-        for order_id in data['order']:
-          self.db.user_record.update({'_id': order_id}, {'$set': {
-              'isExecuted': True
-          }})
-      if data != None:
-        data['next'] = data['next'] + \
-            datetime.timedelta(seconds=data['interval'])
-        data['order'] = []
-        self.db.author_interval.update({'mid': data['mid']}, {'$set': data})
-      return data
-    except Exception as e:
-      self.logger.exception(e)
+  def mid_gener(self):
+    while True:
+      try:
+        # 如果存在锁
+        if self.db.lock.count_documents({"name": "author_interval"}):
+          sleep(0.1)
+        # 挂锁
+        self.db.lock.insert(
+            {"name": "author_interval", "date": datetime.datetime.now()})
+
+        # 先检查有没有手动操作
+        data = list(self.db.author_interval.find(
+            {'order.0': {'$exists': 1}}).limit(100))
+        if data == []:
+          data = list(self.db.author_interval.find(
+              {'next': {'$lt': datetime.datetime.now()}}).limit(100))
+        else:
+          # 如果存在手动操作，则刷新数据
+          for order_id in data['order']:
+            self.db.user_record.update_one({'_id': order_id}, {'$set': {
+                'isExecuted': True
+            }})
+        if data != None:
+          for each_data in data:
+            each_data['next'] = each_data['next'] + \
+                datetime.timedelta(seconds=each_data['interval'])
+            each_data['order'] = []
+            self.db.author_interval.update_one(
+                {'mid': each_data['mid']}, {'$set': each_data})
+        # 解锁
+        self.db.lock.delete_one(
+            {"name": "author_interval"})
+        for each_data in data:
+          yield each_data['mid']
+      except Exception as e:
+        self.logger.exception(e)
 
   def get_new_video_from_interval(self):
     try:
       # 先检查有没有手动操作
-      data = self.db.video_interval.find_one({'order.0': {'$exists': True}})
+      data = self.db.video_interval.find(
+          {'order.0': {'$exists': True}})
       if data == None:
-        data = self.db.video_interval.find_one(
+        data = self.db.video_interval.find(
             {'next': {'$lt': datetime.datetime.now()}})
       else:
         # 如果存在手动操作，则刷新数据
         for order_id in data['order']:
-          self.db.user_record.update({'_id': order_id}, {'$set': {
+          self.db.user_record.update_one({'_id': order_id}, {'$set': {
               'isExecuted': True
           }})
       if data != None:
         data['next'] = data['next'] + \
             datetime.timedelta(seconds=data['interval'])
         data['order'] = []
-        self.db.video_interval.update({'bvid': data['bvid']}, {'$set': data})
+        self.db.video_interval.update_one(
+            {'bvid': data['bvid']}, {'$set': data})
       return data
     except Exception as e:
       self.logger.exception(e)

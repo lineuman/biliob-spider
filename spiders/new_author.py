@@ -12,12 +12,11 @@ from utils import sub_channel_2_channel
 class BiliobNewAuthorSpider(BiliobSpider):
   def gen_url(self):
     url = 'https://api.bilibili.com/x/web-interface/card?mid={}'
-    while True:
-      author_interval = self.get_new_author_from_interval()
-      if author_interval != None:
-        yield url.format(author_interval['mid'])
-      else:
-        sleep(10)
+    mid_gener = self.mid_gener()
+    for each in mid_gener:
+      yield url.format(each)
+    else:
+      sleep(10)
 
   def parse(self, res):
     j = res.json()

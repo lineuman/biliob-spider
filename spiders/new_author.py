@@ -143,6 +143,11 @@ class BiliobNewAuthorSpider(BiliobSpider):
             }
         }
     }, True)
+
+    item['data']['mid'] = item['mid']
+    self.db.author_data.replace_one(
+        {'mid': item['data']['mid'], 'datetime': item['data']['datetime']}, item['data'], upsert=True)
+
     return item
 
 

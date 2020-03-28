@@ -6,4 +6,4 @@ for each_author in db.author.find({}).batch_size(20):
     each_data['mid'] = each_author['mid']
     db.author_data.replace_one(
         {'mid': each_data['mid'], 'datetime': each_data['datetime']}, each_data, upsert=True)
-    print(datetime.now(), data)
+    print(datetime.now(), each_data)

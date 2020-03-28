@@ -7,7 +7,7 @@ from face import face
 from color import color
 
 start_date = datetime.datetime(2018, 12, 1)
-end_date = datetime.datetime.now()
+end_date = datetime.datetime.utcnow() + datetime.timedelta(hours=8)
 date_range = 30 * 24 * 60 * 60
 delta_date = 0.15 * 24 * 60 * 60
 date_format = '%Y-%m-%d %H:%M'

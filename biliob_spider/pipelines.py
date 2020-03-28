@@ -289,7 +289,7 @@ class SiteInfoPipeline(object):
           'all_count': item['all_count'],
           'web_online': item['web_online'],
           'play_online': item['play_online'],
-          'datetime': datetime.datetime.now()
+          'datetime': datetime.datetime.utcnow() + datetime.timedelta(hours=8)
       })
       return item
     except Exception as error:
@@ -403,7 +403,7 @@ class TagPipeLine(object):
           '$addToSet': {
               'use': item['use'],
               'atten': item['atten'],
-              'datetime': datetime.datetime.now()
+              'datetime': datetime.datetime.utcnow() + datetime.timedelta(hours=8)
           }
       }, True)
       return item
@@ -473,7 +473,7 @@ class BiliMonthlyRankPipeline(object):
       }, {
           '$addToSet': {
               'pts': item['pts'],
-              'datetime': datetime.datetime.now()
+              'datetime': datetime.datetime.utcnow() + datetime.timedelta(hours=8)
           },
           '$set': {
               'title': item['title'],

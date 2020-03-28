@@ -11,7 +11,7 @@ for each_author in authors:
   c_date = data[0]['datetime'].strftime('%Y-%m-%d %H:%M')
   f_data = [c_data]
   for each_data in data:
-    delta_day = (datetime.datetime.now() -
+    delta_day = (datetime.datetime.utcnow() + datetime.timedelta(hours=8) -
                  each_data['datetime']).days
     if delta_day >= 0:
       if delta_day < 7:

@@ -51,7 +51,7 @@ class BiliobNewAuthorSpider(BiliobSpider):
         'attention': int(attention),
         'archive': int(archive),
         'article': int(article),
-        'datetime': datetime.datetime.now()
+        'datetime': datetime.datetime.utcnow() + datetime.timedelta(hours=8)
     }
     item['c_fans'] = int(fans)
     item['c_attention'] = int(attention)
@@ -80,7 +80,7 @@ class BiliobNewAuthorSpider(BiliobSpider):
     item['data']['articleView'] = article_view
     item['data']['like'] = like
     item['c_like'] = like
-    now = datetime.datetime.now()
+    now = datetime.datetime.utcnow() + datetime.timedelta(hours=8)
     c = self.db.author.aggregate([
         {
             "$match": {

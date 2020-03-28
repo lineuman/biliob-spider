@@ -41,7 +41,8 @@ class KeywordAdder():
         for each_author in authors:
           start = each_author['mid']
           self.update_keyword_by_author(each_author)
-          print('[{}] {}'.format(datetime.datetime.now(), start))
+          print('[{}] {}'.format(datetime.datetime.utcnow() +
+                                 datetime.timedelta(hours=8), start))
       finally:
         cursor.close()
 

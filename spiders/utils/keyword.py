@@ -17,7 +17,7 @@ class KeywordAdder():
     return self.db.video.find_one({'aid': aid}, video_filter)
 
   def get_video(self):
-    return self.db.video.find({"aid":{'$gt':52602672}}, video_filter, no_cursor_timeout=True).batch_size(100)
+    return self.db.video.find({"aid": {'$gt': 52602672}}, video_filter, no_cursor_timeout=True).batch_size(100)
 
   def get_video_range(self, start, end):
     return self.db.video.find({'aid': {'$lte': end, '$gte': start}}, video_filter, no_cursor_timeout=True).batch_size(100)
@@ -70,7 +70,8 @@ class KeywordAdder():
     try:
       for each_video in cursor:
         keywords = self.update_keyword_by_video(each_video)
-        print('[{}] {}'.format(datetime.datetime.now(), each_video['aid']))
+        print('[{}] {}'.format(datetime.datetime.utcnow() +
+                               datetime.timedelta(hours=8), each_video['aid']))
     finally:
       cursor.close()
 
@@ -80,7 +81,8 @@ class KeywordAdder():
       try:
         for each_video in cursor:
           keywords = self.update_keyword_by_video(each_video)
-          print('[{}] {}'.format(datetime.datetime.now(), each_video['aid']))
+          print('[{}] {}'.format(datetime.datetime.utcnow() +
+                                 datetime.timedelta(hours=8), each_video['aid']))
       finally:
         cursor.close()
       start += 100
@@ -90,7 +92,8 @@ class KeywordAdder():
       sleep(10)
       try:
         for each_video in self.db.video.find({'keyword': {'$exists': False}, 'tag': {'$exists': True}}, video_filter):
-          print('[{}] {}'.format(datetime.datetime.now(), each_video['aid']))
+          print('[{}] {}'.format(datetime.datetime.utcnow() +
+                                 datetime.timedelta(hours=8), each_video['aid']))
           self.update_keyword_by_video(each_video)
       except Exception as e:
         logging.exception(e)

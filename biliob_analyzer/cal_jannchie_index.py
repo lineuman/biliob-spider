@@ -16,7 +16,7 @@ for video in db['video'].find().batch_size(100):
     sleep(0.02)
     count += 1
     if count % 10000 == 0:
-      date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+      date = datetime.datetime.utcnow() + datetime.timedelta(hours=8).strftime("%Y-%m-%d %H:%M")
       print("[{}] 计算完毕数量：{}".format(date, count))
     if 'data' not in video:
       continue

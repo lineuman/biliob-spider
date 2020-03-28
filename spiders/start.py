@@ -53,7 +53,8 @@ def check():
 
 
 def run_spider(spider):
-  print('[{}] 重启 {}'.format(datetime.datetime.now(), spider))
+  print('[{}] 重启 {}'.format(datetime.datetime.utcnow() +
+                            datetime.timedelta(hours=8), spider))
   delete_by_name(spider)
   cmd = 'nohup python {} 1>{}.log 2>&1 &'.format(spider, spider)
   os.system(cmd)

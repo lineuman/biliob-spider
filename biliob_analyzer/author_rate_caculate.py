@@ -13,7 +13,7 @@ def author_fans_rate_caculate():
   coll = db['author']  # 获得collection的句柄
   logger.info('开始计算粉丝增速')
 
-  c_datetime = datetime.datetime.now()
+  c_datetime = datetime.datetime.utcnow() + datetime.timedelta(hours=8)
 
   end_date = (datetime.datetime(
       c_datetime.year, c_datetime.month, c_datetime.day) - datetime.timedelta(1)).timestamp()
@@ -37,7 +37,7 @@ def author_fans_rate_caculate():
                         "input": "$data",
                         "as": "each_data",
                         "cond": {
-                            "$gt": ["$$each_data.datetime", datetime.datetime.now() - datetime.timedelta(7)]
+                            "$gt": ["$$each_data.datetime", datetime.datetime.utcnow() + datetime.timedelta(hours=8) - datetime.timedelta(7)]
                         }
                     }
                 }

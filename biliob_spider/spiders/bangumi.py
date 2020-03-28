@@ -9,36 +9,36 @@ import json
 
 
 class BangumiSpider(scrapy.spiders.Spider):
-    name = "bangumi"
-    allowed_domains = ["bilibili.com"]
-    start_urls = ["https://www.bilibili.com/ranking/bangumi/13/0/7"]
-    custom_settings = {
-        'ITEM_PIPELINES': {
-            'biliob_spider.pipelines.BangumiPipeLine': 200
-        }
-    }
+  name = "bangumi"
+  allowed_domains = ["bilibili.com"]
+  start_urls = ["https://www.bilibili.com/ranking/bangumi/13/0/7"]
+  custom_settings = {
+      'ITEM_PIPELINES': {
+          'biliob_spider.pipelines.BangumiPipeLine': 200
+      }
+  }
 
-    def parse(self, response):
-        try:
-            j = json.loads(response.xpath(
-                "//script[3]/text()").extract()[0][len('window.__INITIAL_STATE__='):].split(';')[0])
-            for each in j['rankList']:
-                item = BangumiItem()
-                item['title'] = each['title']
-                item['cover'] = each['cover']
-                # item['square_cover'] = each['square_cover']
-                # item['is_finish'] = each['is_finish']
-                # item['is_started'] = each['is_started']
-                item['newest_ep_index'] = each['new_ep']['index_show']
-                item['data'] = {
-                    'danmaku': each['stat']['danmaku'],
-                    'watch': each['stat']['follow'],
-                    'play': each['stat']['view'],
-                    'pts': each['pts'],
-                    'review': each['video_review'],
-                    'datetime': datetime.datetime.now()
-                }
-                yield item
-        except Exception as error:
-            # 出现错误时打印错误日志
-            pass
+  def parse(self, response):
+    try:
+      j = json.loads(response.xpath(
+          "//script[3]/text()").extract()[0][len('window.__INITIAL_STATE__='):].split(';')[0])
+      for each in j['rankList']:
+        item = BangumiItem()
+        item['title'] = each['title']
+        item['cover'] = each['cover']
+        # item['square_cover'] = each['square_cover']
+        # item['is_finish'] = each['is_finish']
+        # item['is_started'] = each['is_started']
+        item['newest_ep_index'] = each['new_ep']['index_show']
+        item['data'] = {
+            'danmaku': each['stat']['danmaku'],
+            'watch': each['stat']['follow'],
+            'play': each['stat']['view'],
+            'pts': each['pts'],
+            'review': each['video_review'],
+            'datetime': datetime.datetime.utcnow() + datetime.timedelta(hours=8)
+        }
+        yield item
+    except Exception as error:
+      # 出现错误时打印错误日志
+      pass

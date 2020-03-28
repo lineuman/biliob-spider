@@ -32,14 +32,14 @@ class BiliobSpider(Spider):
           sleep(0.1)
         # 挂锁
         self.db.lock.insert(
-            {"name": "author_interval", "date": datetime.datetime.now()})
+            {"name": "author_interval", "date": datetime.datetime.utcnow()})
 
         # 先检查有没有手动操作
         data = list(self.db.author_interval.find(
             {'order.0': {'$exists': 1}}).limit(100))
         if data == []:
           data = list(self.db.author_interval.find(
-              {'next': {'$lt': datetime.datetime.now()}}).limit(100))
+              {'next': {'$lt': datetime.datetime.utcnow()}}).limit(100))
         else:
           # 如果存在手动操作，则刷新数据
           for order_id in data['order']:
@@ -68,7 +68,7 @@ class BiliobSpider(Spider):
           {'order.0': {'$exists': True}})
       if data == None:
         data = self.db.video_interval.find(
-            {'next': {'$lt': datetime.datetime.now()}})
+            {'next': {'$lt': datetime.datetime.utcnow() + datetime.timedelta(hours=8)}})
       else:
         # 如果存在手动操作，则刷新数据
         for order_id in data['order']:

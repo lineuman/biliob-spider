@@ -11,7 +11,7 @@ import logging
 
 
 def update_interval(interval: int, key: str, value):
-  now = datetime.datetime.now()
+  now = datetime.datetime.utcnow() + datetime.timedelta(hours=8)
   return {
       'next': now,
       'date': now,
@@ -21,7 +21,7 @@ def update_interval(interval: int, key: str, value):
 
 
 def update_video_interval(interval: int, bvid, aid):
-  now = datetime.datetime.now()
+  now = datetime.datetime.utcnow() + datetime.timedelta(hours=8)
   return {
       'next': now,
       'date': now,

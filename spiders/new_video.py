@@ -40,7 +40,7 @@ class BiliobNewVideoSpider(BiliobSpider):
     share = d['stat']['share']
     like = d['stat']['like']
     reply = d['stat']['reply']
-    current_date = datetime.datetime.now()
+    current_date = datetime.datetime.utcnow() + datetime.timedelta(hours=8)
     #  视频=硬币*0.4+收藏*0.3+弹幕*0.4+评论*0.4+播放*0.25+点赞*0.4+分享*0.6
     data = {
         'view': view,

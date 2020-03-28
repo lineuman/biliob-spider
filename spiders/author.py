@@ -153,7 +153,7 @@ class BiliobAuthorSpider(Spider):
     return(item)
 
 
-s = BiliobAuthorSpider("旧视频爬虫")
+s = BiliobAuthorSpider("旧作者爬虫")
 sc = SimpyderConfig()
 sc.PARSE_THREAD_NUMER = 1
 sc.LOG_LEVEL = "INFO"

@@ -49,7 +49,7 @@ class BiliobSpider(Spider):
   def get_new_video_from_interval(self):
     try:
       # 先检查有没有手动操作
-      data = self.db.video_interval.find_one({'order.0': {'$exists': 1}})
+      data = self.db.video_interval.find_one({'order.0': {'$exists': True}})
       if data == None:
         data = self.db.video_interval.find_one(
             {'next': {'$lt': datetime.datetime.now()}})

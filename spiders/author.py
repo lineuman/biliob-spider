@@ -146,7 +146,7 @@ class BiliobAuthorSpider(Spider):
         }
     }, True)
     item['data']['mid'] = item['mid']
-    self.db.author_data.replace_one(
+    db.author_data.replace_one(
         {'mid': item['data']['mid'], 'datetime': item['data']['datetime']}, item['data'], upsert=True)
     if 'object_id' in item:
       self.sentCallBack(item['object_id'], db['user_record'])

@@ -63,6 +63,7 @@ def run_spider(spider):
 
 schedule.every(10).seconds.do(check)
 schedule.every().day.at('09:00').do(run_spider, 'rank_add.py')
+schedule.every().day.at('02:00').do(run_spider, 'calculate_author_daily.py')
 schedule.every().day.at('03:00').do(run_spider, 'utils/keyword_author.py')
 schedule.every().wednesday.at('03:20').do(run_spider, 'utils/keyword.py')
 for each_spider in spiders:

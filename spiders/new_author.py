@@ -90,10 +90,10 @@ class BiliobNewAuthorSpider(BiliobSpider):
             "$unwind": "$data"
         }, {
             "$match": {
-                "data.datetime": {"$gt": now - datetime.timedelta(1.1)}
+                "data.datetime": {"$lt": now - datetime.timedelta(1)}
             }
         }, {
-            "$sort": {"data.datetime": 1}
+            "$sort": {"data.datetime": -1}
         }, {
             "$limit": 1
         }, {
@@ -146,7 +146,6 @@ class BiliobNewAuthorSpider(BiliobSpider):
     item['data']['mid'] = item['mid']
     self.db.author_data.replace_one(
         {'mid': item['data']['mid'], 'datetime': item['data']['datetime']}, item['data'], upsert=True)
-
     return item
 
 

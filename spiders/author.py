@@ -93,10 +93,10 @@ class BiliobAuthorSpider(Spider):
             "$unwind": "$data"
         }, {
             "$match": {
-                "data.datetime": {"$gt": now - datetime.timedelta(1.1)}
+                "data.datetime": {"$lt": now - datetime.timedelta(1)}
             }
         }, {
-            "$sort": {"data.datetime": 1}
+            "$sort": {"data.datetime": -1}
         }, {
             "$limit": 1
         }, {

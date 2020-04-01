@@ -1,5 +1,8 @@
+from utils import enc
 from biliob import BiliobSpider
 from time import sleep
+from datetime import datetime
+from datetime import timedelta
 url = 'https://space.bilibili.com/ajax/member/getSubmitVideos?mid={}&pagesize=10&page=1&order=pubdate'
 
 
@@ -29,9 +32,21 @@ class AddPublicVideoSpider(BiliobSpider):
     except Exception as e:
       self.logger(e)
 
+  def update_video_interval(self, interval: int, aid):
+    now = datetime.utcnow() + timedelta(hours=8)
+    return {
+        'next': now,
+        'date': now,
+        'interval': interval,
+        'aid': aid,
+        'bvid': enc(aid)[2:]
+    }
+
   def save(self, items):
     for aid in items:
-      self.db.video.update_one({'aid': aid}, {'$setOnInsert': {'aid': aid}})
+      self.db.video_interval.update(
+          {'aid': aid}, self.update_video_interval(3600, aid), upsert=True)
+
     return items
 
 

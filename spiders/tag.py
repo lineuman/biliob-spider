@@ -46,13 +46,24 @@ class BiliobTagSpider(Spider):
     return item
 
   def save(self, item):
-    db.video.update_one({
-        'bvid': item['bvid']
-    }, {
-        '$set': {
-            'tag': item['tag_list']
-        }
-    }, upsert=True)
+    if db.video.find_one({'bvid': item['bvid']}) != None:
+      db.video.update_one({
+          'bvid': item['bvid']
+      }, {
+          '$set': {
+              'aid': item['aid'],
+              'tag': item['tag_list']
+          }
+      }, upsert=True)
+    else:
+      db.video.update_one({
+          'aid': item['aid']
+      }, {
+          '$set': {
+              'bvid': item['bvid'],
+              'tag': item['tag_list']
+          }
+      }, upsert=True)
     return item
 
 
@@ -60,7 +71,7 @@ s = BiliobTagSpider("标签爬虫")
 
 sc = SimpyderConfig()
 sc.PARSE_THREAD_NUMER = 8
-sc.LOG_LEVEL = "DEBUG"
+sc.LOG_LEVEL = "INFO"
 sc.USER_AGENT = FAKE_UA
 s.set_config(sc)
 if __name__ == "__main__":

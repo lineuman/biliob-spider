@@ -50,10 +50,9 @@ class BiliobTagSpider(Spider):
         'bvid': item['bvid']
     }, {
         '$set': {
-            'aid': item['aid'],
             'tag': item['tag_list']
         }
-    }, True)
+    }, upsert=True)
     return item
 
 

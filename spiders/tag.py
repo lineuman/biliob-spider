@@ -46,7 +46,7 @@ class BiliobTagSpider(Spider):
     return item
 
   def save(self, item):
-    if db.video.find_one({'bvid': item['bvid']}) != None:
+    if db.video.find_one({'bvid': item['bvid']}, {'bvid': item['bvid']}) != None:
       db.video.update_one({
           'bvid': item['bvid']
       }, {

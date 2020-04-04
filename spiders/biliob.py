@@ -66,6 +66,13 @@ class BiliobSpider(Spider):
 
   def video_gen(self):
     while True:
+      # 如果存在锁
+      if self.db.lock.count_documents({"name": "video_interval"}):
+        sleep(0.1)
+        continue
+      # 挂锁
+      self.db.lock.insert(
+          {"name": "video_interval", "date": datetime.datetime.utcnow()})
       try:
         d = []
         data = self.db.video_interval.find(
@@ -93,6 +100,10 @@ class BiliobSpider(Spider):
                 {'aid': data['aid']}, {'$set': {'bvid': bvid}})
             self.db.video_interval.update_one(
                 {'bvid': data['bvid']}, {'$set': data})
+
+        # 解锁
+        self.db.lock.delete_one(
+            {"name": "author_interval"})
         for data in d:
           yield data
       except Exception as e:

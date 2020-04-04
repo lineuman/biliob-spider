@@ -9,3 +9,4 @@ get_data/face.py
 .vscode/*
 biliob_analyzer/db.py
 db.py
+*.csv

@@ -21,8 +21,8 @@ class BiliobNewVideoSpider(BiliobSpider):
 
   def parse(self, res):
     r = res.json()
-    bvid = res.url.split('bvid')[1]
-    if r['code'] == -404:
+    bvid = res.url.split('bvid=')[1]
+    if r['code'] == -404 or 'data' not in r:
       self.db.video.update_one({'bvid': bvid}, {'$set': {'deleted': True}})
       return None
     d = r["data"]

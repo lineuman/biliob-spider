@@ -12,10 +12,10 @@ from utils import sub_channel_2_channel
 class BiliobNewVideoSpider(BiliobSpider):
   def gen_url(self):
     url = 'https://api.bilibili.com/x/web-interface/view?bvid={}'
-    while True:
-      video_interval = self.get_new_video_from_interval()
-      if video_interval != None:
-        yield url.format(video_interval['bvid'])
+    gen = self.video_gen()
+    for each_video in gen:
+      if each_video != None:
+        yield url.format(each_video['bvid'])
       else:
         sleep(10)
 
@@ -23,7 +23,7 @@ class BiliobNewVideoSpider(BiliobSpider):
     r = res.json()
     bvid = res.url.split('bvid')[1]
     if r['code'] == -404:
-      self.db.update_one({'bvid': bvid}, {'$set': {'deleted': True}})
+      self.db.video.update_one({'bvid': bvid}, {'$set': {'deleted': True}})
       return None
     d = r["data"]
     if 'aid' in d:
@@ -104,12 +104,10 @@ class BiliobNewVideoSpider(BiliobSpider):
     return item
 
   def save(self, item):
-    if db['aid'] == None:
-      data_filter = {
-          'bvid': item['bvid']
-      }
-    else:
+    if db['aid'] != None:
       data_filter = {'aid': item['aid']}
+    else:
+      data_filter = {'bvid': item['bvid']}
     db['video'].update_one(data_filter, {
         '$set': {
             'cView': item['current_view'],

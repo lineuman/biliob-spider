@@ -37,7 +37,7 @@ class BiliobSpider(Spider):
 
         # 先检查有没有手动操作
         data = list(self.db.author_interval.find(
-            {'order.0': {'$exists': 1}}).limit(100))
+            {'order': {'$exists': 1, '$ne': []}}).limit(100))
         if data == []:
           data = list(self.db.author_interval.find(
               {'next': {'$lt': datetime.datetime.utcnow()}}).limit(100))
@@ -63,26 +63,31 @@ class BiliobSpider(Spider):
       except Exception as e:
         self.logger.exception(e)
 
-  def get_new_video_from_interval(self):
+  def video_gen(self):
     try:
-      # 先检查有没有手动操作
-      data = self.db.video_interval.find_one(
-          {'order.0': {'$exists': True}})
-      if data == None:
-        data = self.db.video_interval.find_one(
-            {'next': {'$lt': datetime.datetime.utcnow()}})
-      else:
-        # 如果存在手动操作，则刷新数据
-        for order_id in data['order']:
-          self.db.user_record.update_one({'_id': order_id}, {'$set': {
-              'isExecuted': True
-          }})
-      if data != None:
-        data['next'] = data['next'] + \
-            datetime.timedelta(seconds=data['interval'])
-        data['order'] = []
-        self.db.video_interval.update_one(
-            {'bvid': data['bvid']}, {'$set': data})
-      return data
+      while True:
+        d = []
+        data = self.db.video_interval.find(
+            {'order': {'$exists': True, '$ne': []}}).hint("idx_order").limit(100)
+        for each in data:
+          d.append(each)
+        data = self.db.video_interval.find(
+            {'next': {'$lt': datetime.datetime.utcnow()}}).limit(100)
+        for each in data:
+          d.append(each)
+        for data in d:
+          # 如果存在手动操作，则刷新数据
+          if 'order' in data:
+            for order_id in data['order']:
+              self.db.user_record.update_one({'_id': order_id}, {'$set': {
+                  'isExecuted': True
+              }})
+          data['next'] = data['next'] + \
+              datetime.timedelta(seconds=data['interval'])
+          data['order'] = []
+          self.db.video_interval.update_one(
+              {'bvid': data['bvid']}, {'$set': data})
+        for data in d:
+          yield data
     except Exception as e:
       self.logger.exception(e)

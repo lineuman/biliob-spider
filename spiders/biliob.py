@@ -13,7 +13,7 @@ from utils import sub_channel_2_channel
 
 class BiliobSpider(Spider):
 
-  def __init__(self, name, thread=4, interval=0.05):
+  def __init__(self, name, thread=3, interval=0.05):
     super().__init__()
     self.name = name
     self.db = db
@@ -64,8 +64,8 @@ class BiliobSpider(Spider):
         self.logger.exception(e)
 
   def video_gen(self):
-    try:
-      while True:
+    while True:
+      try:
         d = []
         data = self.db.video_interval.find(
             {'order': {'$exists': True, '$ne': []}}).hint("idx_order").limit(100)
@@ -89,5 +89,5 @@ class BiliobSpider(Spider):
               {'bvid': data['bvid']}, {'$set': data})
         for data in d:
           yield data
-    except Exception as e:
-      self.logger.exception(e)
+      except Exception as e:
+        self.logger.exception(e)

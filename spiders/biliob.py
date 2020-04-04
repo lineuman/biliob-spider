@@ -9,6 +9,7 @@ from simpyder import FAKE_UA
 from simpyder import SimpyderConfig
 from bson import ObjectId
 from utils import sub_channel_2_channel
+from utils import enc
 
 
 class BiliobSpider(Spider):
@@ -85,8 +86,13 @@ class BiliobSpider(Spider):
           data['next'] = data['next'] + \
               datetime.timedelta(seconds=data['interval'])
           data['order'] = []
-          self.db.video_interval.update_one(
-              {'bvid': data['bvid']}, {'$set': data})
+          if 'bvid' not in data:
+            bvid = enc(data['aid'])[2:]
+            data['bvid'] = bvid
+            self.db.video_interval.update_one(
+                {'aid': data['aid']}, {'$set': {'bvid': bvid}})
+            self.db.video_interval.update_one(
+                {'bvid': data['bvid']}, {'$set': data})
         for data in d:
           yield data
       except Exception as e:

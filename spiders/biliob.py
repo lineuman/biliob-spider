@@ -103,7 +103,7 @@ class BiliobSpider(Spider):
 
         # 解锁
         self.db.lock.delete_one(
-            {"name": "author_interval"})
+            {"name": "video_interval"})
         for data in d:
           yield data
       except Exception as e:

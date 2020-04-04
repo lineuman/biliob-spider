@@ -17,7 +17,7 @@ class BiliobNewVideoSpider(BiliobSpider):
       if each_video != None:
         yield url.format(each_video['bvid'])
       else:
-        sleep(10)
+        sleep(5)
 
   def parse(self, res):
     r = res.json()

@@ -1,12 +1,14 @@
 from db import db
 import datetime
 video_coll = db['video']
-videos = video_coll.find({'data.6000': {'$exists': True}})
+videos = video_coll.find({})
 for each_video in videos:
   if 'aid' not in each_video:
     continue
   print(each_video['title'])
   aid = each_video['aid']
+  if 'data' not in each_video or len(each_video['data']) < 100:
+    continue
   data = sorted(each_video['data'],
                 key=lambda x: x['datetime'], reverse=True)
   c_data = data[0]

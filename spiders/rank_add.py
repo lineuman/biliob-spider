@@ -67,16 +67,19 @@ class BiliobRankAdd(Spider):
 
   def save(self, items):
     for item in items:
-      db.author_interval.update_one({
-          'mid': item['mid']},
-          {
-          '$set': update_interval(3600, 'mid', item['mid'])
-      }, upsert=True)
-      if item['aid'] != None:
-        filter_dict = {'aid': item['aid']}
-      else:
+      author = db.author_interval.find_one({'mid': item['mid']})
+      if author == None or author['interval'] > 3600:
+        db.author_interval.update_one({
+            'mid': item['mid']},
+            {
+            '$set': update_interval(3600, 'mid', item['mid'])
+        }, upsert=True)
+      if 'bvid' in item and item['bvid'] != None:
         filter_dict = {
             'bvid': item['bvid']}
+      else:
+        filter_dict = {'aid': item['aid']}
+
       db.video_interval.update_one(filter_dict,
                                    {
                                        '$set': update_video_interval(3600, item['bvid'], item['aid'])

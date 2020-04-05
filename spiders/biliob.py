@@ -14,7 +14,7 @@ from utils import enc
 
 class BiliobSpider(Spider):
 
-  def __init__(self, name, thread=1, interval=0.1):
+  def __init__(self, name, thread=5, interval=1):
     super().__init__()
     self.name = name
     self.db = db

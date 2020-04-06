@@ -37,32 +37,37 @@ def standardization(data):
     while cd < p_dt:
       # 如果检查点在前驱前，则后移检查点
       cd += datetime.timedelta(1)
+
     if n_dt < cd:
       # 如果检查点在后驱后，则后移窗口
       continue
-    # 获取值
-    result = {'datetime': cd}
-    for key in ['archiveView', 'fans', 'like']:
-      p_val = p_data[key]
-      n_val = None
-      if key in n_data:
-        n_val = n_data[key]
-      if p_val == None or n_val == None:
-        result[key] = None
-        continue
-      # 计算差值数据
-      delta_v = n_val - p_val
-      start_v = p_val
-      delta_t = n_dt.timestamp() - p_dt.timestamp()
-      delta_c = cd.timestamp() - p_dt.timestamp()
-      cv = delta_v / delta_t * delta_c + start_v
-      result[key] = cv
-    # cd += datetime.timedelta(1)
-    out.append(result)
-    for key in ['archiveView', 'fans', 'like']:
-      if key in n_data and n_data[key] != None:
-        p_data[key] = n_data[key]
-    p_dt = n_dt
+    else:
+      while cd < n_dt:
+        # 获取值
+        result = {'datetime': cd}
+        for key in ['archiveView', 'fans', 'like']:
+          p_val = p_data[key]
+          n_val = None
+          if key in n_data:
+            n_val = n_data[key]
+          if p_val == None or n_val == None:
+            result[key] = None
+            continue
+          # 计算差值数据
+          delta_v = n_val - p_val
+          start_v = p_val
+          delta_t = n_dt.timestamp() - p_dt.timestamp()
+          delta_c = cd.timestamp() - p_dt.timestamp()
+          cv = delta_v / delta_t * delta_c + start_v
+          result[key] = cv
+        # cd += datetime.timedelta(1)
+        out.append(result)
+        cd += datetime.timedelta(1)
+      for key in ['archiveView', 'fans', 'like']:
+        if key in n_data and n_data[key] != None:
+          p_data[key] = n_data[key]
+      p_dt = n_dt
+
   return out
 
 

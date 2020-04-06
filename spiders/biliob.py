@@ -94,12 +94,13 @@ class BiliobSpider(Spider):
               datetime.timedelta(seconds=data['interval'])
           data['order'] = []
           if 'bvid' not in data:
-            bvid = enc(data['aid'])[2:]
+            bvid = enc(data['aid']).lstrip("BV")
             data['bvid'] = bvid
-            self.db.video_interval.update_one(
-                {'aid': data['aid']}, {'$set': {'bvid': bvid}})
-            self.db.video_interval.update_one(
-                {'bvid': data['bvid']}, {'$set': data})
+          if 'aid' not in data:
+            aid = dec(data['bvid'])
+            data['aid'] = aid
+          self.db.video_interval.update_one(
+              {'aid': data['aid'], 'bvid': data['bvid']}, {'$set': data})
 
         # 解锁
         self.db.lock.delete_one(

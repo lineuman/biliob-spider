@@ -99,7 +99,7 @@ def add_data(mid, data):
   pass
 
 
-for each_author in db.author.find({}, {'mid': 1}).batch_size(100):
+for each_author in db.author.find({}, {'mid': 1}).batch_size(1):
   mid = each_author['mid']
   data = get_data(mid)
   if data == None or data == []:

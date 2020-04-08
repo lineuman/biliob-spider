@@ -63,7 +63,7 @@ class AddPublicVideoSpider(BiliobSpider):
           {'bvid': bvid, 'aid': aid})
       if interval_data == None:
         self.db.video_interval.update_one(
-            {'bvid': bvid, 'aid': aid}, {'$set': self.update_video_interval(3600 * 6, aid, bvid), '$setOnInsert': {'date': datetime.utcnow() + timedelta(hours=8)}}, upsert=True)
+            {'bvid': bvid, 'aid': aid}, {'$set': self.update_video_interval(3600 * 12, aid, bvid), '$setOnInsert': {'date': datetime.utcnow() + timedelta(hours=8)}}, upsert=True)
 
     return items
 

@@ -82,7 +82,7 @@ class BiliobRankAdd(Spider):
 
       db.video_interval.update_one(filter_dict,
                                    {
-                                       '$set': update_video_interval(3600, item['bvid'], item['aid'])
+                                       '$set': update_video_interval(3600 * 12, item['bvid'], item['aid'])
                                    }, upsert=True)
     return items
 

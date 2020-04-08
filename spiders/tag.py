@@ -16,16 +16,16 @@ class BiliobTagSpider(Spider):
     while True:
       try:
         videos = db.video.find({
-            'tag': {
-                '$exists': False
-            }
-        }, {'aid': 1, 'bvid': 1})
+            '$or': [{'tag': []}, {'tag': {
+                '$exists': False,
+            }}]
+        }, {'aid': 1, 'bvid': 1}).limit(100)
         for each_video in videos:
           if 'bvid' in each_video:
             bvid = each_video['bvid']
           else:
             bvid = enc(each_video['aid'])
-          yield 'https://www.bilibili.com/video/{}'.format(bvid)
+          yield 'https://www.bilibili.com/video/BV{}'.format(bvid)
       except Exception as e:
         logging.exception(e)
       sleep(10)
@@ -46,6 +46,8 @@ class BiliobTagSpider(Spider):
     return item
 
   def save(self, item):
+    if item['tag_list'] == []:
+      item['tag_list'] = [None]
     if db.video.find_one({'bvid': item['bvid']}, {'bvid': item['bvid']}) != None:
       db.video.update_one({
           'bvid': item['bvid']

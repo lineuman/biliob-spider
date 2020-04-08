@@ -2,7 +2,7 @@ from db import db
 import datetime
 import logging
 video_coll = db['video']
-videos = video_coll.find({})
+videos = video_coll.find({'cView': {'$gt': 100000}})
 for each_video in videos:
   try:
     if 'aid' not in each_video:

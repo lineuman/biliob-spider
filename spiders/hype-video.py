@@ -1,12 +1,12 @@
 from time import sleep
 from utils import sub_channel_2_channel
-from new_video import BiliobNewVideoSpider
+from biliob import BiliobSpider
 import datetime
 url = 'https://api.bilibili.com/x/article/archives?ids={}'
 # 该爬虫依赖于AV号
 
 
-class Spider(BiliobNewVideoSpider):
+class HypeSpider(BiliobSpider):
   def __init__(self):
     super().__init__("超级视频爬虫", thread=8, interval=0.1)
 
@@ -143,6 +143,6 @@ class Spider(BiliobNewVideoSpider):
       return item
 
 
-s = Spider()
+s = HypeSpider()
 if __name__ == "__main__":
   s.run()

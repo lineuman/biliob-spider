@@ -64,6 +64,41 @@ class BiliobSpider(Spider):
       except Exception as e:
         self.logger.exception(e)
 
+  def video_gen_without_lock(self):
+    while True:
+      try:
+        d = []
+        data = self.db.video_interval.find(
+            {'order': {'$exists': True, '$ne': []}}).hint("idx_order").limit(100)
+        for each in data:
+          d.append(each)
+        data = self.db.video_interval.find(
+            {'next': {'$lt': datetime.datetime.utcnow()}}).limit(100)
+        for each in data:
+          d.append(each)
+        for data in d:
+          # 如果存在手动操作，则刷新数据
+          if 'order' in data:
+            for order_id in data['order']:
+              self.db.user_record.update_one({'_id': order_id}, {'$set': {
+                  'isExecuted': True
+              }})
+          data['next'] = data['next'] + \
+              datetime.timedelta(seconds=data['interval'])
+          data['order'] = []
+          if 'bvid' not in data:
+            bvid = enc(data['aid']).lstrip("BV")
+            data['bvid'] = bvid
+          if 'aid' not in data:
+            aid = dec(data['bvid'])
+            data['aid'] = aid
+          self.db.video_interval.update_one(
+              {'aid': data['aid'], 'bvid': data['bvid']}, {'$set': data})
+        for data in d:
+          yield data
+      except Exception as e:
+        self.logger.exception(e)
+
   def video_gen(self):
     while True:
       # 如果存在锁

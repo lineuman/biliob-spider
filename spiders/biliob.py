@@ -69,11 +69,7 @@ class BiliobSpider(Spider):
       try:
         d = []
         data = self.db.video_interval.find(
-            {'order': {'$exists': True, '$ne': []}}).hint("idx_order").limit(100)
-        for each in data:
-          d.append(each)
-        data = self.db.video_interval.find(
-            {'next': {'$lt': datetime.datetime.utcnow()}}).limit(100)
+            {'next': {'$lt': datetime.datetime.utcnow()}}).hint("idx_next")
         for each in data:
           d.append(each)
         for data in d:
